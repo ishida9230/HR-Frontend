@@ -14,7 +14,7 @@ export default function Home() {
     // TODO: 認証を有効にする際は以下のロジックを使用
     // if (!loading) {
     //   if (user) {
-    //     router.push("/dashboard/profile");
+    //     router.push("/profile");
     //   } else {
     //     router.push("/login");
     //   }

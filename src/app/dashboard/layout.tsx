@@ -10,11 +10,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { PanelLeftIcon, PanelRightIcon } from "lucide-react";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   // TODO: 認証を有効にする際はコメントを外す
@@ -51,12 +47,14 @@ export default function DashboardLayout({
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
           "--header-height": "calc(var(--spacing) * 12)",
-          backgroundColor: isSidebarVisible ? 'oklch(97% 0.014 254.604)' : 'oklch(99% 0.005 73.684)',
+          backgroundColor: isSidebarVisible
+            ? "oklch(97% 0.014 254.604)"
+            : "oklch(99% 0.005 73.684)",
         } as React.CSSProperties
       }
     >
       {isSidebarVisible && <AppSidebar variant="inset" />}
-      <SidebarInset style={{ backgroundColor: 'oklch(99% 0.005 73.684)' }}>
+      <SidebarInset style={{ backgroundColor: "oklch(99% 0.005 73.684)" }}>
         <div className="flex flex-1 flex-col">
           <div className="flex items-center gap-2 p-4">
             <Button

@@ -6,9 +6,7 @@ export default function LoginPage() {
       <div className="auth-card">
         <div className="auth-header">
           <h1 className="auth-title">HRシステム</h1>
-          <p className="auth-description">
-            アカウントにログインしてください
-          </p>
+          <p className="auth-description">アカウントにログインしてください</p>
         </div>
 
         <LoginForm />

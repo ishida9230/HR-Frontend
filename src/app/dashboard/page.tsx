@@ -8,7 +8,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     // ダッシュボードルートにアクセスしたらプロフィールにリダイレクト
-    router.push("/dashboard/profile");
+    router.push("/profile");
   }, [router]);
 
   return null;

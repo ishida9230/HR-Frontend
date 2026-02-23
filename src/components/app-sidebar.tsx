@@ -1,14 +1,11 @@
 "use client";
 
 import * as React from "react";
-import {
-  IconUser,
-  IconFileDescription,
-  IconUsers,
-  IconLogout,
-} from "@tabler/icons-react";
+import { IconUser, IconFileDescription, IconUsers, IconLogout } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { PanelLeftIcon, PanelRightIcon } from "lucide-react";
 
 import {
   Sidebar,
@@ -27,7 +24,7 @@ import {
 const navItems = [
   {
     title: "プロフィール",
-    url: "/dashboard/profile",
+    url: "/profile",
     icon: IconUser,
   },
   {
@@ -42,7 +39,12 @@ const navItems = [
   },
 ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  isSidebarVisible: boolean;
+  toggleSidebar: () => void;
+}
+
+export function AppSidebar({ isSidebarVisible, toggleSidebar, ...props }: AppSidebarProps) {
   const router = useRouter();
   // TODO: 認証を有効にする際はコメントを外す
   // const { signOut } = useAuth();
@@ -60,14 +62,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupContent className="flex flex-col gap-2">
             <SidebarMenu>
-              {navItems.map((item) => (
+              {navItems.map((item, index) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton tooltip={item.title} asChild>
-                    <Link href={item.url}>
-                      {item.icon && <item.icon />}
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
+                  <div className="flex items-center justify-between w-full">
+                    <SidebarMenuButton tooltip={item.title} asChild className="flex-1">
+                      <Link href={item.url}>
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                    {index === 0 && (
+                      <Button
+                        onClick={toggleSidebar}
+                        size="icon"
+                        className="bg-white rounded-none shadow-sm hover:bg-white hover:text-black h-8 w-8 ml-2"
+                      >
+                        {isSidebarVisible ? (
+                          <PanelLeftIcon className="h-2 w-2" />
+                        ) : (
+                          <PanelRightIcon className="h-2 w-2" />
+                        )}
+                      </Button>
+                    )}
+                  </div>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

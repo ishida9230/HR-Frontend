@@ -32,7 +32,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // TODO: Firebase認証を有効にする際は以下を使用
   // const [user, setUser] = useState<User | null>(null);
-  
+
   // 開発用：モックユーザー状態
   const [user, setUser] = useState<MockUser | null>(null);
   const [loading] = useState(false);

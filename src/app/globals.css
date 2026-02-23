@@ -4,19 +4,19 @@
 
 @theme {
   --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(222.2 84% 4.9%);
+  --color-foreground: hsl(0 0% 0%);
   --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(222.2 84% 4.9%);
+  --color-card-foreground: hsl(0 0% 0%);
   --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(222.2 84% 4.9%);
+  --color-popover-foreground: hsl(0 0% 0%);
   --color-primary: hsl(221.2 83.2% 53.3%);
   --color-primary-foreground: hsl(210 40% 98%);
   --color-secondary: hsl(210 40% 96%);
-  --color-secondary-foreground: hsl(222.2 84% 4.9%);
+  --color-secondary-foreground: hsl(0 0% 0%);
   --color-muted: hsl(210 40% 96%);
   --color-muted-foreground: hsl(215.4 16.3% 46.9%);
   --color-accent: hsl(210 40% 96%);
-  --color-accent-foreground: hsl(222.2 84% 4.9%);
+  --color-accent-foreground: hsl(0 0% 0%);
   --color-destructive: hsl(0 84.2% 60.2%);
   --color-destructive-foreground: hsl(210 40% 98%);
   --color-border: hsl(214.3 31.8% 91.4%);
@@ -51,10 +51,6 @@
 }
 
 /* Base styles */
-* {
-  border-color: var(--color-border);
-}
-
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
@@ -174,13 +170,19 @@ body {
 }
 
 @layer base {
+  /* デフォルトで全てのテキストを黒に */
   * {
-    @apply border-border outline-ring/50;
+    color: black;
   }
+  
   body {
     @apply bg-background text-foreground;
   }
+  
   input {
     @apply text-black;
   }
+  
+  /* Tailwindのユーティリティクラスが優先されるように */
+  /* text-gray-600, text-gray-400 などは、より高い特異性で適用される */
 }

@@ -42,12 +42,10 @@ export default function LoginForm() {
     try {
       setError("");
       setIsLoading(true);
-    //   await signIn(data.email, data.password);
-      router.push("/dashboard/profile");
+      //   await signIn(data.email, data.password);
+      router.push("/profile");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "ログインに失敗しました"
-      );
+      setError(err instanceof Error ? err.message : "ログインに失敗しました");
     } finally {
       setIsLoading(false);
     }
@@ -70,9 +68,7 @@ export default function LoginForm() {
           {...register("email")}
           className={errors.email ? "border-destructive" : ""}
         />
-        {errors.email && (
-          <p className="form-error">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="form-error">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -84,9 +80,7 @@ export default function LoginForm() {
           {...register("password")}
           className={errors.password ? "border-destructive" : ""}
         />
-        {errors.password && (
-          <p className="form-error">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="form-error">{errors.password.message}</p>}
       </div>
 
       <Button
@@ -105,10 +99,7 @@ export default function LoginForm() {
       </Button>
 
       <div className="text-center">
-        <Link
-          href="/forgot-password"
-          className="text-sm text-gray-500 hover:underline"
-        >
+        <Link href="/forgot-password" className="text-sm text-gray-500 hover:underline">
           パスワードを忘れた方はこちら
         </Link>
       </div>
