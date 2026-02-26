@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/lib/auth";
+// TODO: 認証を有効にする際はコメントを外す
+// import { AuthProvider } from "@/lib/auth";
 import { QueryProvider } from "@/lib/query-provider";
 import { LayoutWrapper } from "@/components/layout-wrapper";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +39,7 @@ export default function RootLayout({
             <LayoutWrapper>{children}</LayoutWrapper>
           </ErrorBoundary>
           {/* </AuthProvider> */}
+          <Toaster />
         </QueryProvider>
       </body>
     </html>

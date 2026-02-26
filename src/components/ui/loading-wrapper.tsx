@@ -50,7 +50,10 @@ export function LoadingWrapper({
   return (
     <div className={cn("relative w-full", className)}>
       {isLoading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/10 backdrop-blur-sm min-h-[200px]">
+        <div
+          className="absolute inset-0 z-50 flex items-center justify-center min-h-[200px]"
+          style={{ backgroundColor: `rgba(0, 0, 0, ${overlayOpacity * 0.1})` }}
+        >
           <div className="flex items-center justify-center">
             {customLoader || <Loader2 className="h-8 w-8 animate-spin text-primary" />}
           </div>

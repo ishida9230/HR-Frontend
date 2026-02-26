@@ -1,55 +1,42 @@
 /**
- * 従業員APIクライアント
+ * 変更申請APIクライアント
  */
 
 // バックエンドAPIのベースURL
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 /**
- * 従業員プロフィールのレスポンス型
- * バックエンドのDTOと一致させる
+ * 変更申請作成リクエスト型
  */
-export interface EmployeeProfileResponse {
-  id: number;
-  employeeCode: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  postalCode: string;
-  address: string;
-  phone: string;
-  employmentType: "正社員" | "契約社員" | "業務委託";
-  isActive: boolean;
-  createdAt: string; // ISO 8601形式
-  updatedAt: string; // ISO 8601形式
-  assignments: EmployeeAssignmentResponse[];
+export interface CreateRequestRequest {
+  employeeId: number;
+  text: string;
+  items: Array<{
+    fieldKey: string;
+    oldValue: string | null;
+    newValue: string | null;
+  }>;
 }
 
 /**
- * 従業員所属情報のレスポンス型
+ * 変更申請レスポンス型
  */
-export interface EmployeeAssignmentResponse {
+export interface RequestResponse {
   id: number;
   employeeId: number;
-  departmentId: number;
-  branchId: number;
-  positionId: number;
-  superiorFlag: boolean;
-  startDate: string; // ISO 8601形式
-  endDate: string | null; // ISO 8601形式
+  status: string;
+  text: string;
+  submittedAt: string | null; // ISO 8601形式
+  completedAt: string | null; // ISO 8601形式
   createdAt: string; // ISO 8601形式
-  department: {
+  updatedAt: string; // ISO 8601形式
+  items: Array<{
     id: number;
-    name: string;
-  };
-  branch: {
-    id: number;
-    name: string;
-  };
-  position: {
-    id: number;
-    name: string;
-  };
+    fieldKey: string;
+    oldValue: string | null;
+    newValue: string | null;
+    createdAt: string; // ISO 8601形式
+  }>;
 }
 
 /**
@@ -66,29 +53,30 @@ export interface ApiErrorResponse {
 import { ApiError } from "../errors/api-error";
 
 /**
- * 従業員プロフィールを取得
- * @param id 従業員ID
- * @returns 従業員プロフィール
+ * 変更申請を作成
+ * @param request 変更申請作成リクエスト
+ * @returns 変更申請レスポンス
  * @throws ApiError API呼び出しが失敗した場合（エラーコードを含む）
  */
-export async function getEmployeeProfile(id: number): Promise<EmployeeProfileResponse> {
+export async function createChangeRequest(request: CreateRequestRequest): Promise<RequestResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/employees/${id}`, {
-      method: "GET",
+    const response = await fetch(`${API_BASE_URL}/api/requests`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include", // CORSでクッキーを送信する場合
+      body: JSON.stringify(request),
     });
 
     // statusが200以外の場合はエラーを投げる
     if (!response.ok) {
-      let errorMessage: string;
+      let errorMessage: string = "変更申請の作成に失敗しました";
       let errorDetails: unknown;
       try {
         // エラーメッセージを取得
         const errorData: ApiErrorResponse = await response.json();
-        errorMessage = errorData.error?.message;
+        errorMessage = errorData.error?.message || errorMessage;
         errorDetails = errorData.error?.details;
       } catch {
         // JSONパースに失敗した場合はデフォルトメッセージを使用
@@ -97,7 +85,7 @@ export async function getEmployeeProfile(id: number): Promise<EmployeeProfileRes
       throw new ApiError(response.status, errorMessage, errorDetails);
     }
 
-    const data: EmployeeProfileResponse = await response.json();
+    const data: RequestResponse = await response.json();
     return data;
   } catch (error) {
     // fetch自体が失敗した場合（ネットワークエラーなど）は500エラーとして扱う
