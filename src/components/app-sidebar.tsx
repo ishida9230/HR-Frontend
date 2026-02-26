@@ -16,7 +16,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 // TODO: 認証を有効にする際はコメントを外す
 // import { useAuth } from "@/lib/auth";

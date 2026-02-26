@@ -80,7 +80,6 @@ export async function getEmployeeProfile(id: number): Promise<EmployeeProfileRes
       },
       credentials: "include", // CORSでクッキーを送信する場合
     });
-    console.log(response);
 
     // statusが200以外の場合はエラーを投げる
     if (!response.ok) {
