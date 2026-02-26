@@ -6,8 +6,6 @@ import { FallbackProps } from "react-error-boundary";
 import {
   ERROR_TITLE_DEFAULT,
   ERROR_TITLE_NETWORK,
-  ERROR_MESSAGE_VALIDATION,
-  ERROR_MESSAGE_NOT_FOUND,
   ERROR_MESSAGE_NETWORK,
 } from "@/lib/errors/error-messages";
 

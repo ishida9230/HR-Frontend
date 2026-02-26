@@ -38,11 +38,11 @@ export default function LoginForm() {
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (_data: LoginFormData) => {
     try {
       setError("");
       setIsLoading(true);
-      //   await signIn(data.email, data.password);
+      //   await signIn(_data.email, _data.password);
       router.push("/profile");
     } catch (err) {
       setError(err instanceof Error ? err.message : "ログインに失敗しました");
