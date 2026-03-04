@@ -49,6 +49,7 @@ export interface RequestResponse {
   completedAt: string | null; // ISO 8601形式
   createdAt: string; // ISO 8601形式
   updatedAt: string; // ISO 8601形式
+  isHidden: boolean;
   items: Array<{
     id: number;
     fieldKey: string;
@@ -162,6 +163,50 @@ export async function getChangeRequestById(id: number): Promise<RequestResponse>
       500,
       "ネットワークエラーが発生しました。しばらくしてから再度お試しください。",
       error
+    );
+  }
+}
+
+/**
+ * 変更申請を非表示にする
+ * @param id 変更申請ID
+ * @returns 非表示にされた変更申請レスポンス（{ id: number }）
+ * @throws ApiError API呼び出しが失敗した場合（エラーコードを含む）
+ */
+export async function hideChangeRequest(id: number): Promise<{ id: number }> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/requests/${id}/hide`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      let errorMessage: string = "申請の非表示に失敗しました";
+      let errorDetails: unknown;
+      try {
+        const errorData: ApiErrorResponse = await response.json();
+        errorMessage = errorData.error?.message || errorMessage;
+        errorDetails = errorData.error?.details;
+      } catch {
+        // JSONパースに失敗した場合はデフォルトメッセージを使用
+      }
+
+      throw new ApiError(response.status, errorMessage, errorDetails);
+    }
+
+    const data: { id: number } = await response.json();
+    return data;
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new ApiError(
+      500,
+      "ネットワークエラーが発生しました。しばらくしてから再度お試しください。",
+      { originalError: error instanceof Error ? error.message : String(error) }
     );
   }
 }

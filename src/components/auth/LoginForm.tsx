@@ -38,7 +38,7 @@ export default function LoginForm() {
     },
   });
 
-  const onSubmit = async (_data: LoginFormData) => {
+  const onSubmit = async () => {
     try {
       setError("");
       setIsLoading(true);

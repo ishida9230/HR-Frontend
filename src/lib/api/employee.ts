@@ -23,8 +23,17 @@ export interface EmployeeProfileResponse {
   createdAt: string; // ISO 8601形式
   updatedAt: string; // ISO 8601形式
   assignments: EmployeeAssignmentResponse[];
-  hasPendingChangeRequest: boolean; // 変更申請があるかどうかのフラグ
-  latestChangeRequestId: number | null; // 最新の変更申請ID（存在する場合）
+  hasPendingChangeRequest: boolean; // 完了、差し戻し以外のステータスがあるかどうか
+  changeRequests: ChangeRequestInfo[]; // 非表示でない変更申請の全て（isHidden: false、ソート済み）
+}
+
+/**
+ * 変更申請情報（簡易版）
+ */
+export interface ChangeRequestInfo {
+  id: number;
+  status: string;
+  isHidden: boolean;
 }
 
 /**
@@ -37,8 +46,6 @@ export interface EmployeeAssignmentResponse {
   branchId: number;
   positionId: number;
   superiorFlag: boolean;
-  startDate: string; // ISO 8601形式
-  endDate: string | null; // ISO 8601形式
   createdAt: string; // ISO 8601形式
   department: {
     id: number;

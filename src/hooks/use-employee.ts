@@ -23,6 +23,7 @@ export function useEmployeeProfile(id: number | null, enabled: boolean = true) {
     },
     enabled: enabled && id !== null,
     staleTime: 5 * 60 * 1000, // 5分間キャッシュ
+    refetchOnWindowFocus: true, // ウィンドウフォーカス時に再取得
     throwOnError: true, // エラーをエラーバウンダリーに伝播
   });
 }
