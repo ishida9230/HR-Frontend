@@ -23,6 +23,8 @@ export interface EmployeeProfileResponse {
   createdAt: string; // ISO 8601形式
   updatedAt: string; // ISO 8601形式
   assignments: EmployeeAssignmentResponse[];
+  hasPendingChangeRequest: boolean; // 変更申請があるかどうかのフラグ
+  latestChangeRequestId: number | null; // 最新の変更申請ID（存在する場合）
 }
 
 /**
@@ -83,12 +85,12 @@ export async function getEmployeeProfile(id: number): Promise<EmployeeProfileRes
 
     // statusが200以外の場合はエラーを投げる
     if (!response.ok) {
-      let errorMessage: string;
+      let errorMessage: string = "従業員プロフィールの取得に失敗しました";
       let errorDetails: unknown;
       try {
         // エラーメッセージを取得
         const errorData: ApiErrorResponse = await response.json();
-        errorMessage = errorData.error?.message;
+        errorMessage = errorData.error?.message || errorMessage;
         errorDetails = errorData.error?.details;
       } catch {
         // JSONパースに失敗した場合はデフォルトメッセージを使用

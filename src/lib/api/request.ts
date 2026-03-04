@@ -19,6 +19,25 @@ export interface CreateRequestRequest {
 }
 
 /**
+ * 所属情報のレスポンス型（変更申請詳細ページ用）
+ * assignmentsフィールドのoldValue/newValueはこの形式のJSON文字列
+ */
+export interface AssignmentsFormattedResponse {
+  branches: Array<{
+    id: number;
+    name: string;
+  }>;
+  departments: Array<{
+    id: number;
+    name: string;
+  }>;
+  positions: Array<{
+    id: number;
+    name: string;
+  }>;
+}
+
+/**
  * 変更申請レスポンス型
  */
 export interface RequestResponse {
@@ -35,6 +54,8 @@ export interface RequestResponse {
     fieldKey: string;
     oldValue: string | null;
     newValue: string | null;
+    // assignmentsフィールドの場合、oldValueとnewValueはAssignmentsFormattedResponseのJSON文字列
+    // それ以外のフィールドの場合は通常の文字列
     createdAt: string; // ISO 8601形式
   }>;
 }
@@ -93,6 +114,50 @@ export async function createChangeRequest(request: CreateRequestRequest): Promis
       throw error;
     }
     // ネットワークエラーなどの予期しないエラー
+    throw new ApiError(
+      500,
+      "ネットワークエラーが発生しました。しばらくしてから再度お試しください。",
+      error
+    );
+  }
+}
+
+/**
+ * 変更申請詳細を取得
+ * @param id 変更申請ID
+ * @returns 変更申請レスポンス
+ * @throws ApiError API呼び出しが失敗した場合（エラーコードを含む）
+ */
+export async function getChangeRequestById(id: number): Promise<RequestResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/requests/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      let errorMessage: string = "変更申請の取得に失敗しました";
+      let errorDetails: unknown;
+      try {
+        const errorData: ApiErrorResponse = await response.json();
+        errorMessage = errorData.error?.message || errorMessage;
+        errorDetails = errorData.error?.details;
+      } catch {
+        // JSONパースに失敗した場合はデフォルトメッセージを使用
+      }
+      throw new ApiError(response.status, errorMessage, errorDetails);
+    }
+
+    const data: RequestResponse = await response.json();
+    return data;
+  } catch (error) {
+    // fetch自体が失敗した場合（ネットワークエラーなど）は500エラーとして扱う
+    if (error instanceof ApiError) {
+      throw error;
+    }
     throw new ApiError(
       500,
       "ネットワークエラーが発生しました。しばらくしてから再度お試しください。",
