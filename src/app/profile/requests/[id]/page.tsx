@@ -2,14 +2,13 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useErrorBoundary } from "react-error-boundary";
 import {
-  getChangeRequestById,
   hideChangeRequest,
-  RequestResponse,
   AssignmentsFormattedResponse,
 } from "@/lib/api/request";
+import { useChangeRequest } from "@/hooks/use-request";
 import { ApiError } from "@/lib/errors/api-error";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,15 +57,12 @@ export default function RequestDetailPage() {
   const [isHidingRequest, setIsHidingRequest] = useState(false);
   const { showBoundary } = useErrorBoundary();
 
+  // フックは早期リターンの前に呼ぶ（React Hooksのルール）
   const {
     data: request,
     isLoading,
     error: queryError,
-  } = useQuery<RequestResponse, ApiError>({
-    queryKey: ["request", requestId],
-    queryFn: () => getChangeRequestById(requestId),
-    enabled: !isNaN(requestId), // requestIdが無効な場合はクエリを実行しない
-  });
+  } = useChangeRequest(requestId, !isNaN(requestId));
 
   useEffect(() => {
     if (queryError) {
@@ -74,6 +70,7 @@ export default function RequestDetailPage() {
     }
   }, [queryError]);
 
+  // 早期リターンはフックの後
   if (isNaN(requestId)) {
     return null;
   }

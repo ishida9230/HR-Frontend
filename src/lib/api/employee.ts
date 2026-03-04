@@ -2,8 +2,7 @@
  * 従業員APIクライアント
  */
 
-// バックエンドAPIのベースURL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { apiFetch } from "./api-client";
 
 /**
  * 従業員プロフィールのレスポンス型
@@ -62,62 +61,14 @@ export interface EmployeeAssignmentResponse {
 }
 
 /**
- * APIエラーレスポンス型
- */
-export interface ApiErrorResponse {
-  error: {
-    code: number;
-    message: string;
-    details?: unknown;
-  };
-}
-
-import { ApiError } from "../errors/api-error";
-
-/**
  * 従業員プロフィールを取得
  * @param id 従業員ID
  * @returns 従業員プロフィール
  * @throws ApiError API呼び出しが失敗した場合（エラーコードを含む）
  */
 export async function getEmployeeProfile(id: number): Promise<EmployeeProfileResponse> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/employees/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // CORSでクッキーを送信する場合
-    });
-
-    // statusが200以外の場合はエラーを投げる
-    if (!response.ok) {
-      let errorMessage: string = "従業員プロフィールの取得に失敗しました";
-      let errorDetails: unknown;
-      try {
-        // エラーメッセージを取得
-        const errorData: ApiErrorResponse = await response.json();
-        errorMessage = errorData.error?.message || errorMessage;
-        errorDetails = errorData.error?.details;
-      } catch {
-        // JSONパースに失敗した場合はデフォルトメッセージを使用
-      }
-      // エラーコードを含むApiErrorを投げる
-      throw new ApiError(response.status, errorMessage, errorDetails);
-    }
-
-    const data: EmployeeProfileResponse = await response.json();
-    return data;
-  } catch (error) {
-    // fetch自体が失敗した場合（ネットワークエラーなど）は500エラーとして扱う
-    if (error instanceof ApiError) {
-      throw error;
-    }
-    // ネットワークエラーなどの予期しないエラー
-    throw new ApiError(
-      500,
-      "ネットワークエラーが発生しました。しばらくしてから再度お試しください。",
-      error
-    );
-  }
+  return apiFetch<EmployeeProfileResponse>(`/api/employees/${id}`, {
+    method: "GET",
+    defaultErrorMessage: "従業員プロフィールの取得に失敗しました",
+  });
 }

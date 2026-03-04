@@ -221,7 +221,6 @@ export default function ProfileEditPage() {
       });
       router.push("/profile");
     } catch (error) {
-
       // エラーハンドリング
       if (error instanceof ApiError) {
         // 400系エラー：エラーモーダルを表示
