@@ -1,30 +1,69 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { useErrorBoundary } from "react-error-boundary";
 import { useEmployeeProfile } from "@/hooks/use-employee";
+import { hideChangeRequest } from "@/lib/api/request";
+import { ApiError } from "@/lib/errors/api-error";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Stack } from "@/components/ui/stack";
 import { PageHeader } from "@/components/ui/page-header";
 import { LoadingWrapper } from "@/components/ui/loading-wrapper";
-import { AlertCircle } from "lucide-react";
+import { ErrorModal } from "@/components/ui/error-modal";
+import { AlertCircle, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   // 従業員IDは現在は1を固定値として使用（認証実装後は認証情報から取得）
   const { data: profile, isLoading } = useEmployeeProfile(1);
+  const [isHidingRequest, setIsHidingRequest] = useState(false);
+  const [error, setError] = useState<ApiError | null>(null);
+  const { showBoundary } = useErrorBoundary();
 
   const handleRequestChange = () => {
-    router.push("/profile/edit");
+    router.push("/profile/requests/create");
   };
 
-  const handleViewRequest = () => {
-    if (profile?.latestChangeRequestId) {
-      router.push(`/profile/requests/${profile.latestChangeRequestId}`);
+  const handleViewRequest = (requestId: number) => {
+    router.push(`/profile/requests/${requestId}`);
+  };
+
+  const handleHideRequest = async (requestId: number) => {
+    setIsHidingRequest(true);
+    try {
+      await hideChangeRequest(requestId);
+      toast.success("申請を非表示にしました。");
+      // プロフィールデータのキャッシュを無効化して再取得
+      await queryClient.invalidateQueries({
+        queryKey: ["employee", "profile", 1],
+      });
+      // 明示的に再取得を実行
+      await queryClient.refetchQueries({
+        queryKey: ["employee", "profile", 1],
+      });
+    } catch (error) {
+      if (error instanceof ApiError) {
+        // 400系エラー：エラーモーダルを表示
+        if (error.code >= 400 && error.code < 500) {
+          setError(error);
+        } else {
+          // 500系エラー：エラーバウンダリーに伝播
+          showBoundary(error);
+        }
+      } else {
+        // 予期しないエラー：エラーバウンダリーに伝播
+        showBoundary(error as Error);
+      }
+    } finally {
+      setIsHidingRequest(false);
     }
   };
-
 
   if (!profile) {
     return null;
@@ -38,7 +77,7 @@ export default function ProfilePage() {
           <Button
             className="bg-blue-300 text-black hover:bg-blue-500"
             onClick={handleRequestChange}
-            disabled={isLoading}
+            disabled={isLoading || profile?.hasPendingChangeRequest}
           >
             変更申請
           </Button>
@@ -46,29 +85,98 @@ export default function ProfilePage() {
       />
       <Stack>
         {/* 変更確認フィールド */}
-        {profile?.hasPendingChangeRequest && profile.latestChangeRequestId && (
-          <Card className="bg-yellow-50 border-yellow-200 shadow-sm w-full">
-            <CardContent className="px-6 py-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 flex-1">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="font-medium text-yellow-900">プロフィール変更中</p>
-                    <p className="text-sm text-yellow-700">
-                      変更申請が承認待ちです。詳細を確認できます。
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  onClick={handleViewRequest}
-                  className="bg-yellow-600 text-white hover:bg-yellow-700 flex-shrink-0"
+        {profile?.changeRequests
+          .filter((req) => !req.isHidden)
+          .map((changeRequest) => {
+            const status = changeRequest.status;
+
+            // 差し戻しの場合
+            if (status === "CHANGES_REQUESTED") {
+              return (
+                <Card key={changeRequest.id} className="bg-red-50 border-red-200 shadow-sm w-full">
+                  <CardContent className="px-6 py-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 flex-1">
+                        <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="font-medium text-red-900">
+                            プロフィール変更が差し戻しされました。
+                          </p>
+                          <p className="text-sm text-red-700">
+                            変更申請が差し戻しされました。詳細を確認できます。
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleViewRequest(changeRequest.id)}
+                        className="bg-red-600 text-white hover:bg-red-700 flex-shrink-0"
+                      >
+                        確認
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            }
+
+            // 完了の場合
+            if (status === "COMPLETED") {
+              return (
+                <Card
+                  key={changeRequest.id}
+                  className="bg-green-50 border-green-200 shadow-sm w-full"
                 >
-                  確認
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                  <CardContent className="px-6 py-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 flex-1">
+                        <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="font-medium text-green-900">
+                            プロフィール変更承認されました。
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleHideRequest(changeRequest.id)}
+                        className="bg-green-600 text-white hover:bg-green-700 flex-shrink-0"
+                        disabled={isHidingRequest}
+                      >
+                        申請を非表示にする
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            }
+
+            // その他（PENDING_MANAGER、PENDING_HR）は現状の仕様
+            return (
+              <Card
+                key={changeRequest.id}
+                className="bg-yellow-50 border-yellow-200 shadow-sm w-full"
+              >
+                <CardContent className="px-6 py-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 flex-1">
+                      <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+                      <div className="flex-1">
+                        <p className="font-medium text-yellow-900">プロフィール変更中</p>
+                        <p className="text-sm text-yellow-700">
+                          変更申請が承認待ちです。詳細を確認できます。
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => handleViewRequest(changeRequest.id)}
+                      className="bg-yellow-600 text-white hover:bg-yellow-700 flex-shrink-0"
+                    >
+                      確認
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
 
         {/* プロフィールと所属情報 */}
         <LoadingWrapper isLoading={isLoading}>
@@ -179,6 +287,19 @@ export default function ProfilePage() {
           </Card>
         </LoadingWrapper>
       </Stack>
+
+      {error && (
+        <ErrorModal
+          open={!!error}
+          onOpenChange={(open) => {
+            if (!open) {
+              setError(null);
+            }
+          }}
+          title="エラー"
+          message={error.message || "申請の非表示に失敗しました"}
+        />
+      )}
     </>
   );
 }
