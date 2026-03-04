@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Stack } from "@/components/ui/stack";
 import { PageHeader } from "@/components/ui/page-header";
 import { LoadingWrapper } from "@/components/ui/loading-wrapper";
+import { AlertCircle } from "lucide-react";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -17,6 +18,13 @@ export default function ProfilePage() {
   const handleRequestChange = () => {
     router.push("/profile/edit");
   };
+
+  const handleViewRequest = () => {
+    if (profile?.latestChangeRequestId) {
+      router.push(`/profile/requests/${profile.latestChangeRequestId}`);
+    }
+  };
+
 
   if (!profile) {
     return null;
@@ -37,6 +45,31 @@ export default function ProfilePage() {
         }
       />
       <Stack>
+        {/* 変更確認フィールド */}
+        {profile?.hasPendingChangeRequest && profile.latestChangeRequestId && (
+          <Card className="bg-yellow-50 border-yellow-200 shadow-sm w-full">
+            <CardContent className="px-6 py-4">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 flex-1">
+                  <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-medium text-yellow-900">プロフィール変更中</p>
+                    <p className="text-sm text-yellow-700">
+                      変更申請が承認待ちです。詳細を確認できます。
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleViewRequest}
+                  className="bg-yellow-600 text-white hover:bg-yellow-700 flex-shrink-0"
+                >
+                  確認
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* プロフィールと所属情報 */}
         <LoadingWrapper isLoading={isLoading}>
           {/* プロフィール */}
