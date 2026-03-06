@@ -55,11 +55,12 @@ export function RequestListTable({
   formatDate,
 }: RequestListTableProps) {
   return (
-    <Card className="mt-4 bg-white">
+    <Card className="bg-white">
       <CardContent className="p-0">
-        <TableContainer>
-          <Table fixed>
-            <TableHeader>
+        <div className="overflow-hidden">
+          <TableContainer scrollable maxHeight="calc(100vh - 500px)">
+            <Table fixed>
+              <TableHeader sticky>
               <TableHeaderRow>
                 <TableHeaderCell width="20">申請ID</TableHeaderCell>
                 <TableHeaderCell width="45">従業員</TableHeaderCell>
@@ -123,8 +124,9 @@ export function RequestListTable({
                 ))
               )}
             </TableBody>
-          </Table>
-        </TableContainer>
+            </Table>
+          </TableContainer>
+        </div>
       </CardContent>
     </Card>
   );

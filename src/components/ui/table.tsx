@@ -10,10 +10,23 @@ import { cn } from "@/lib/utils";
 interface TableContainerProps {
   children: React.ReactNode;
   className?: string;
+  scrollable?: boolean;
+  maxHeight?: string;
 }
 
-export function TableContainer({ children, className }: TableContainerProps) {
-  return <div className={cn("overflow-x-auto", className)}>{children}</div>;
+export function TableContainer({ children, className, scrollable = false, maxHeight }: TableContainerProps) {
+  return (
+    <div
+      className={cn(
+        "overflow-x-auto",
+        scrollable && "overflow-y-auto",
+        className
+      )}
+      style={maxHeight ? { maxHeight } : undefined}
+    >
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -42,10 +55,21 @@ export function Table({ children, className, fixed = false }: TableProps) {
 interface TableHeaderProps {
   children: React.ReactNode;
   className?: string;
+  sticky?: boolean;
+  stickyTop?: number;
 }
 
-export function TableHeader({ children, className }: TableHeaderProps) {
-  return <thead className={className}>{children}</thead>;
+export function TableHeader({ children, className, sticky = false, stickyTop = 0 }: TableHeaderProps) {
+  return (
+    <thead
+      className={cn(
+        sticky && "sticky top-0 z-10 bg-gray-50",
+        className
+      )}
+    >
+      {children}
+    </thead>
+  );
 }
 
 /**
