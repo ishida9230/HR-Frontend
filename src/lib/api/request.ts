@@ -99,3 +99,108 @@ export async function hideChangeRequest(id: number): Promise<{ id: number }> {
     defaultErrorMessage: "申請の非表示に失敗しました",
   });
 }
+
+/**
+ * 申請件数レスポンス型
+ */
+export interface RequestCountResponse {
+  pendingManager: number;
+  pendingHr: number;
+}
+
+/**
+ * 申請一覧検索クエリ型
+ */
+export interface RequestListQuery {
+  statuses?: string[];
+  employeeName?: string;
+  departmentIds?: number[];
+  branchIds?: number[];
+  positionIds?: number[];
+  page?: number;
+  limit?: number;
+}
+
+/**
+ * 申請一覧アイテム型
+ */
+export interface RequestListItem {
+  id: number;
+  title: string;
+  employee: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  };
+  departments: Array<{
+    id: number;
+    name: string;
+  }>;
+  branches: Array<{
+    id: number;
+    name: string;
+  }>;
+  positions: Array<{
+    id: number;
+    name: string;
+  }>;
+  status: string;
+  submittedAt: string | null;
+  updatedAt: string;
+}
+
+/**
+ * 申請一覧レスポンス型
+ */
+export interface RequestListResponse {
+  requests: RequestListItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+/**
+ * 申請件数を取得
+ * @returns 申請件数レスポンス
+ * @throws ApiError API呼び出しが失敗した場合（エラーコードを含む）
+ */
+export async function getRequestCounts(): Promise<RequestCountResponse> {
+  return apiFetch<RequestCountResponse>("/api/requests/count", {
+    method: "GET",
+    defaultErrorMessage: "申請件数の取得に失敗しました",
+  });
+}
+
+/**
+ * 申請一覧を取得
+ * @param query 検索・フィルタリング・ページネーションクエリ
+ * @returns 申請一覧レスポンス
+ * @throws ApiError API呼び出しが失敗した場合（エラーコードを含む）
+ */
+export async function getRequestList(query: RequestListQuery): Promise<RequestListResponse> {
+  const queryParams = new URLSearchParams();
+  if (query.statuses && query.statuses.length > 0) {
+    query.statuses.forEach((status) => queryParams.append("status", status));
+  }
+  if (query.employeeName) queryParams.append("employeeName", query.employeeName);
+  if (query.departmentIds && query.departmentIds.length > 0) {
+    query.departmentIds.forEach((id) => queryParams.append("departmentIds", id.toString()));
+  }
+  if (query.branchIds && query.branchIds.length > 0) {
+    query.branchIds.forEach((id) => queryParams.append("branchIds", id.toString()));
+  }
+  if (query.positionIds && query.positionIds.length > 0) {
+    query.positionIds.forEach((id) => queryParams.append("positionIds", id.toString()));
+  }
+  if (query.page) queryParams.append("page", query.page.toString());
+  if (query.limit) queryParams.append("limit", query.limit.toString());
+
+  const queryString = queryParams.toString();
+  const endpoint = queryString ? `/api/requests/list?${queryString}` : "/api/requests/list";
+
+  return apiFetch<RequestListResponse>(endpoint, {
+    method: "GET",
+    defaultErrorMessage: "申請一覧の取得に失敗しました",
+  });
+}

@@ -28,7 +28,7 @@ const navItems = [
   },
   {
     title: "申請一覧",
-    url: "/dashboard/requests",
+    url: "/requests/count",
     icon: IconFileDescription,
   },
   {
