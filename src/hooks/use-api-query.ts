@@ -21,9 +21,7 @@ export interface UseApiQueryOptions<TData, _TError = ApiError> {
  * 汎用的なAPIクエリフック
  * 共通の設定（staleTime、refetchOnWindowFocus、throwOnError）を適用
  */
-export function useApiQuery<TData, TError = ApiError>(
-  options: UseApiQueryOptions<TData, TError>
-) {
+export function useApiQuery<TData, TError = ApiError>(options: UseApiQueryOptions<TData, TError>) {
   return useQuery<TData, TError>({
     queryKey: options.queryKey,
     queryFn: options.queryFn,

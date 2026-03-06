@@ -3,7 +3,14 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import { useRequestList } from "@/hooks/use-request";
-import { getDepartments, getBranches, getPositions, type Department, type Branch, type Position } from "@/lib/api/masters";
+import {
+  getDepartments,
+  getBranches,
+  getPositions,
+  type Department,
+  type Branch,
+  type Position,
+} from "@/lib/api/masters";
 import { RequestListQuery } from "@/lib/api/request";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,7 +64,10 @@ export default function RequestListPage() {
   });
 
   // マスターデータの取得
-  const { data: departments = [], isLoading: isLoadingDepartments } = useApiQuery<Department[], ApiError>({
+  const { data: departments = [], isLoading: isLoadingDepartments } = useApiQuery<
+    Department[],
+    ApiError
+  >({
     queryKey: ["departments"],
     queryFn: () => getDepartments(),
   });
@@ -67,10 +77,12 @@ export default function RequestListPage() {
     queryFn: () => getBranches(),
   });
 
-  const { data: positions = [], isLoading: isLoadingPositions } = useApiQuery<Position[], ApiError>({
-    queryKey: ["positions"],
-    queryFn: () => getPositions(),
-  });
+  const { data: positions = [], isLoading: isLoadingPositions } = useApiQuery<Position[], ApiError>(
+    {
+      queryKey: ["positions"],
+      queryFn: () => getPositions(),
+    }
+  );
 
   // 申請一覧の取得（検索条件を使用）
   const { data, isLoading, error } = useRequestList(searchQuery);
@@ -117,7 +129,7 @@ export default function RequestListPage() {
   const handleReset = () => {
     // 申請一覧ページ内での検索（from=listまたはfromなし）の場合のみ申請ステータスもリセット
     const isRequestListPage = fromParam !== "count";
-    
+
     setEmployeeNameInput("");
     setDepartmentIds([]);
     setBranchIds([]);

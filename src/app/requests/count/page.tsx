@@ -41,7 +41,11 @@ export default function RequestCountPage() {
   };
 
   const tabs = [
-    { status: "PENDING_MANAGER", label: STATUS_LABELS.PENDING_MANAGER, count: counts?.pendingManager },
+    {
+      status: "PENDING_MANAGER",
+      label: STATUS_LABELS.PENDING_MANAGER,
+      count: counts?.pendingManager,
+    },
     { status: "PENDING_HR", label: STATUS_LABELS.PENDING_HR, count: counts?.pendingHr },
     { status: "CHANGES_REQUESTED", label: STATUS_LABELS.CHANGES_REQUESTED },
     { status: "COMPLETED", label: STATUS_LABELS.COMPLETED },

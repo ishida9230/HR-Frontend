@@ -25,7 +25,12 @@ interface PaginationProps {
  * ページネーションコンポーネント
  * 現在のページの前後2ページまで表示し、それ以外は省略記号で表示
  */
-export function Pagination({ currentPage, totalPages, onPageChange, className = "" }: PaginationProps) {
+export function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  className = "",
+}: PaginationProps) {
   if (totalPages <= 1) {
     return null;
   }
@@ -57,7 +62,9 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
                 variant={p === currentPage ? "default" : "outline"}
                 onClick={() => onPageChange(p)}
                 className={`min-w-[2.5rem] ${
-                  p !== currentPage ? "bg-gray-100 border-gray-200 text-black hover:bg-white hover:text-black" : ""
+                  p !== currentPage
+                    ? "bg-gray-100 border-gray-200 text-black hover:bg-white hover:text-black"
+                    : ""
                 }`}
               >
                 {p}

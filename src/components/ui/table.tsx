@@ -14,14 +14,15 @@ interface TableContainerProps {
   maxHeight?: string;
 }
 
-export function TableContainer({ children, className, scrollable = false, maxHeight }: TableContainerProps) {
+export function TableContainer({
+  children,
+  className,
+  scrollable = false,
+  maxHeight,
+}: TableContainerProps) {
   return (
     <div
-      className={cn(
-        "overflow-x-auto",
-        scrollable && "overflow-y-auto",
-        className
-      )}
+      className={cn("overflow-x-auto", scrollable && "overflow-y-auto", className)}
       style={maxHeight ? { maxHeight } : undefined}
     >
       {children}
@@ -59,16 +60,14 @@ interface TableHeaderProps {
   stickyTop?: number;
 }
 
-export function TableHeader({ children, className, sticky = false, stickyTop = 0 }: TableHeaderProps) {
+export function TableHeader({
+  children,
+  className,
+  sticky = false,
+  stickyTop = 0,
+}: TableHeaderProps) {
   return (
-    <thead
-      className={cn(
-        sticky && "sticky top-0 z-10 bg-gray-50",
-        className
-      )}
-    >
-      {children}
-    </thead>
+    <thead className={cn(sticky && "sticky top-0 z-10 bg-gray-50", className)}>{children}</thead>
   );
 }
 
@@ -81,11 +80,7 @@ interface TableHeaderRowProps {
 }
 
 export function TableHeaderRow({ children, className }: TableHeaderRowProps) {
-  return (
-    <tr className={cn("border-b border-gray-200 bg-gray-50", className)}>
-      {children}
-    </tr>
-  );
+  return <tr className={cn("border-b border-gray-200 bg-gray-50", className)}>{children}</tr>;
 }
 
 /**
@@ -106,9 +101,11 @@ export function TableHeaderCell({ children, className, width }: TableHeaderCellP
         "45": "w-45",
       }[width] || ""
     : "";
-  
+
   return (
-    <th className={cn("px-4 py-3 text-left text-sm font-medium text-gray-600", widthClass, className)}>
+    <th
+      className={cn("px-4 py-3 text-left text-sm font-medium text-gray-600", widthClass, className)}
+    >
       {children}
     </th>
   );
@@ -159,9 +156,5 @@ interface TableCellProps {
 }
 
 export function TableCell({ children, className }: TableCellProps) {
-  return (
-    <td className={cn("px-4 py-3 text-sm text-base font-medium", className)}>
-      {children}
-    </td>
-  );
+  return <td className={cn("px-4 py-3 text-sm text-base font-medium", className)}>{children}</td>;
 }

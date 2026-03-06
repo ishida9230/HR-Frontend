@@ -20,7 +20,11 @@ interface EmptyStateProps {
   className?: string;
 }
 
-export function EmptyState({ message = "データが見つかりませんでした", colSpan = 1, className = "" }: EmptyStateProps) {
+export function EmptyState({
+  message = "データが見つかりませんでした",
+  colSpan = 1,
+  className = "",
+}: EmptyStateProps) {
   return (
     <tr>
       <td colSpan={colSpan} className={`px-4 py-8 text-center text-muted-foreground ${className}`}>

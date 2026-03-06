@@ -61,69 +61,67 @@ export function RequestListTable({
           <TableContainer scrollable maxHeight="calc(100vh - 500px)">
             <Table fixed>
               <TableHeader sticky>
-              <TableHeaderRow>
-                <TableHeaderCell width="20">申請ID</TableHeaderCell>
-                <TableHeaderCell width="45">従業員</TableHeaderCell>
-                <TableHeaderCell width="32">部署</TableHeaderCell>
-                <TableHeaderCell width="32">支店</TableHeaderCell>
-                <TableHeaderCell width="32">役職</TableHeaderCell>
-                <TableHeaderCell>タイトル</TableHeaderCell>
-                <TableHeaderCell width="45">申請ステータス</TableHeaderCell>
-                <TableHeaderCell width="32">申請日</TableHeaderCell>
-              </TableHeaderRow>
-            </TableHeader>
-            <TableBody>
-              {requests.length === 0 ? (
-                <EmptyState message={emptyMessage} colSpan={8} />
-              ) : (
-                requests.map((request) => (
-                  <TableRow key={request.id} onClick={() => onRowClick(request.id)}>
-                    <TableCell>{request.id}</TableCell>
-                    <TableCell>
-                      {request.employee.lastName} {request.employee.firstName}
-                    </TableCell>
-                    <TableCell>
-                      {request.departments.length > 0 ? (
-                        <div className="space-y-1">
-                          {request.departments.map((d) => (
-                            <div key={d.id}>{d.name}</div>
-                          ))}
-                        </div>
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {request.branches.length > 0 ? (
-                        <div className="space-y-1">
-                          {request.branches.map((b) => (
-                            <div key={b.id}>{b.name}</div>
-                          ))}
-                        </div>
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {request.positions.length > 0 ? (
-                        <div className="space-y-1">
-                          {request.positions.map((p) => (
-                            <div key={p.id}>{p.name}</div>
-                          ))}
-                        </div>
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                    <TableCell className="break-words">{request.title}</TableCell>
-                    <TableCell>
-                      {STATUS_LABELS[request.status] || request.status}
-                    </TableCell>
-                    <TableCell>{formatDate(request.submittedAt)}</TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
+                <TableHeaderRow>
+                  <TableHeaderCell width="20">申請ID</TableHeaderCell>
+                  <TableHeaderCell width="45">従業員</TableHeaderCell>
+                  <TableHeaderCell width="32">部署</TableHeaderCell>
+                  <TableHeaderCell width="32">支店</TableHeaderCell>
+                  <TableHeaderCell width="32">役職</TableHeaderCell>
+                  <TableHeaderCell>タイトル</TableHeaderCell>
+                  <TableHeaderCell width="45">申請ステータス</TableHeaderCell>
+                  <TableHeaderCell width="32">申請日</TableHeaderCell>
+                </TableHeaderRow>
+              </TableHeader>
+              <TableBody>
+                {requests.length === 0 ? (
+                  <EmptyState message={emptyMessage} colSpan={8} />
+                ) : (
+                  requests.map((request) => (
+                    <TableRow key={request.id} onClick={() => onRowClick(request.id)}>
+                      <TableCell>{request.id}</TableCell>
+                      <TableCell>
+                        {request.employee.lastName} {request.employee.firstName}
+                      </TableCell>
+                      <TableCell>
+                        {request.departments.length > 0 ? (
+                          <div className="space-y-1">
+                            {request.departments.map((d) => (
+                              <div key={d.id}>{d.name}</div>
+                            ))}
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {request.branches.length > 0 ? (
+                          <div className="space-y-1">
+                            {request.branches.map((b) => (
+                              <div key={b.id}>{b.name}</div>
+                            ))}
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {request.positions.length > 0 ? (
+                          <div className="space-y-1">
+                            {request.positions.map((p) => (
+                              <div key={p.id}>{p.name}</div>
+                            ))}
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                      <TableCell className="break-words">{request.title}</TableCell>
+                      <TableCell>{STATUS_LABELS[request.status] || request.status}</TableCell>
+                      <TableCell>{formatDate(request.submittedAt)}</TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
             </Table>
           </TableContainer>
         </div>

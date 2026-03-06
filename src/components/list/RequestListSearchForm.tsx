@@ -152,8 +152,11 @@ export function RequestListSearchForm({
                   {departmentIds.length === 0
                     ? "すべて"
                     : departmentIds.length === 1
-                    ? departments.find((d) => d.id === departmentIds[0])?.name || "選択中"
-                    : `${departmentIds.map((id) => departments.find((d) => d.id === id)?.name).filter(Boolean).join(", ")}`}
+                      ? departments.find((d) => d.id === departmentIds[0])?.name || "選択中"
+                      : `${departmentIds
+                          .map((id) => departments.find((d) => d.id === id)?.name)
+                          .filter(Boolean)
+                          .join(", ")}`}
                 </span>
                 <ChevronDownIcon className="h-4 w-4 opacity-50" />
               </button>
@@ -199,8 +202,11 @@ export function RequestListSearchForm({
                   {branchIds.length === 0
                     ? "すべて"
                     : branchIds.length === 1
-                    ? branches.find((b) => b.id === branchIds[0])?.name || "選択中"
-                    : `${branchIds.map((id) => branches.find((b) => b.id === id)?.name).filter(Boolean).join(", ")}`}
+                      ? branches.find((b) => b.id === branchIds[0])?.name || "選択中"
+                      : `${branchIds
+                          .map((id) => branches.find((b) => b.id === id)?.name)
+                          .filter(Boolean)
+                          .join(", ")}`}
                 </span>
                 <ChevronDownIcon className="h-4 w-4 opacity-50" />
               </button>
@@ -249,8 +255,11 @@ export function RequestListSearchForm({
                     {statusInputs.length === 0
                       ? "すべて"
                       : statusInputs.length === 1
-                      ? STATUS_LABELS[statusInputs[0]] || "選択中"
-                      : `${statusInputs.map((s) => STATUS_LABELS[s]).filter(Boolean).join(", ")}`}
+                        ? STATUS_LABELS[statusInputs[0]] || "選択中"
+                        : `${statusInputs
+                            .map((s) => STATUS_LABELS[s])
+                            .filter(Boolean)
+                            .join(", ")}`}
                   </span>
                   <ChevronDownIcon className="h-4 w-4 opacity-50" />
                 </button>
@@ -297,8 +306,11 @@ export function RequestListSearchForm({
                   {positionIds.length === 0
                     ? "すべて"
                     : positionIds.length === 1
-                    ? positions.find((p) => p.id === positionIds[0])?.name || "選択中"
-                    : `${positionIds.map((id) => positions.find((p) => p.id === id)?.name).filter(Boolean).join(", ")}`}
+                      ? positions.find((p) => p.id === positionIds[0])?.name || "選択中"
+                      : `${positionIds
+                          .map((id) => positions.find((p) => p.id === id)?.name)
+                          .filter(Boolean)
+                          .join(", ")}`}
                 </span>
                 <ChevronDownIcon className="h-4 w-4 opacity-50" />
               </button>
