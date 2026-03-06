@@ -398,7 +398,7 @@ export default function RequestDetailPage() {
                           address: 4,
                           salary: 5,
                         };
-
+                        
                         return request.items
                           .filter(
                             (item) =>
