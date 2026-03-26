@@ -248,9 +248,9 @@ export default function RequestListPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // 申請詳細への遷移
+  // 申請承認画面への遷移
   const handleRequestClick = (requestId: number) => {
-    router.push(`/requests/${requestId}/approve`);
+    router.push(`/requests/approve/${requestId}`);
   };
 
   /**
