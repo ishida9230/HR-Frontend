@@ -204,3 +204,102 @@ export async function getRequestList(query: RequestListQuery): Promise<RequestLi
     defaultErrorMessage: "申請一覧の取得に失敗しました",
   });
 }
+
+/**
+ * 前回の承認情報型
+ */
+export interface PreviousApprovalInfo {
+  actedAt: string | null; // ISO 8601形式
+  actedBy: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  } | null;
+  comment: string | null; // コメント（差し戻し理由など）
+}
+
+/**
+ * 申請承認画面用レスポンス型（RequestResponseに前回の承認情報を追加）
+ */
+export interface RequestApprovalResponse extends RequestResponse {
+  previousApproval: PreviousApprovalInfo | null;
+}
+
+/**
+ * 承認・差し戻しリクエスト型（統合API用）
+ */
+export interface RequestActionRequest {
+  status: string;                 // 次のステータス（必須、検証用）
+  comment?: string;               // コメント（差し戻し時のみ必須）
+  actedByEmployeeId: number;      // 実行者の従業員ID（必須）
+}
+
+/**
+ * 承認・差し戻しリクエスト型（旧形式、後方互換性のため残す）
+ * @deprecated RequestActionRequestを使用してください
+ */
+export interface ApproveRequestRequest {
+  comment?: string;
+  actedByEmployeeId: number;
+}
+
+/**
+ * 申請承認画面用の申請詳細を取得（前回の承認情報を含む）
+ * @param id 申請ID
+ * @returns 申請承認画面用レスポンス
+ * @throws ApiError API呼び出しが失敗した場合（エラーコードを含む）
+ */
+export async function getRequestForApproval(id: number): Promise<RequestApprovalResponse> {
+  return apiFetch<RequestApprovalResponse>(`/api/requests/${id}/approve`, {
+    method: "GET",
+    defaultErrorMessage: "申請詳細の取得に失敗しました",
+  });
+}
+
+/**
+ * 申請の承認・差し戻しを処理（統合API）
+ * @param id 申請ID
+ * @param request アクションリクエスト
+ * @returns 更新された申請レスポンス
+ * @throws ApiError API呼び出しが失敗した場合（エラーコードを含む）
+ */
+export async function processRequestAction(
+  id: number,
+  request: RequestActionRequest
+): Promise<RequestResponse> {
+  return apiFetch<RequestResponse>(`/api/requests/${id}/action`, {
+    method: "POST",
+    body: request,
+    defaultErrorMessage: "申請の処理に失敗しました",
+  });
+}
+
+/**
+ * 申請を承認する（旧形式、後方互換性のため残す）
+ * @deprecated processRequestActionを使用してください
+ */
+export async function approveRequest(
+  id: number,
+  request: ApproveRequestRequest
+): Promise<RequestResponse> {
+  return apiFetch<RequestResponse>(`/api/requests/${id}/approve`, {
+    method: "POST",
+    body: request,
+    defaultErrorMessage: "申請の承認に失敗しました",
+  });
+}
+
+/**
+ * 申請を差し戻す（旧形式、後方互換性のため残す）
+ * @deprecated processRequestActionを使用してください
+ */
+export async function rejectRequest(
+  id: number,
+  request: ApproveRequestRequest
+): Promise<RequestResponse> {
+  return apiFetch<RequestResponse>(`/api/requests/${id}/reject`, {
+    method: "POST",
+    body: request,
+    defaultErrorMessage: "申請の差し戻しに失敗しました",
+  });
+}
